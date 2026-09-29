@@ -14,7 +14,7 @@ module tb_alu;
 
   initial begin
     $dumpfile("alu.vcd");
-    $dumpvars(0, alu_tb);
+    $dumpvars(0, tb_alu);
 
     a = 10;
     b = 20;
