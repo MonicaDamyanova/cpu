@@ -20,4 +20,9 @@ module regfile (
     end
   end
 
+  initial begin
+    registers[1] = 16'd10;
+    registers[2] = 16'd20;
+  end
+
 endmodule
