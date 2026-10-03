@@ -14,7 +14,7 @@ I learn in classes, because just reading the textbook is not working.
 - Big-Endian
 
 ## Compiling & Running Instructions
-1. Run `verilator --binary --timing --trace-vcd --top-module tb_<...> rtl/<...>.sv testbench/tb_<...>.sv`
+1. Run `verilator --binary --timing --trace-vcd --top-module tb_<...> rtl/*.sv testbench/tb_<...>.sv`
 1. `cd obj_dir`
 1. `./Vtb<...>`
 1. Open GTKWave `gtkwave <...>.vcd`
