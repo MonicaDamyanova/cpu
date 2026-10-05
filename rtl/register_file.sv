@@ -1,4 +1,4 @@
-module regfile (
+module register_file (
   input logic clk,          // Clock
   input logic write_en,     // Write Enable
   input logic [2:0] rs1,    // Source Register 1 - Number designates desired register

@@ -9,7 +9,7 @@ module tb_regfile;
   logic [15:0] out1;
   logic [15:0] out2;
 
-  regfile dut (clk, write_en, rs1, rs2, rd, in, out1, out2);
+  register_file dut (clk, write_en, rs1, rs2, rd, in, out1, out2);
 
   always #5 clk = ~clk;
 

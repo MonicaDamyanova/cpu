@@ -2,6 +2,8 @@ module cpu(
   input logic clk
 );
 
+  import cpu_defs::*;
+
   logic [15:0] alu_a;
   logic [15:0] alu_b;
   logic [15:0] alu_result;
@@ -13,19 +15,24 @@ module cpu(
   logic        reg_write;
   logic [15:0] write_data;
 
+  logic [3:0] opcode;
   logic [1:0] alu_op;
 
-  // Temporary for testing
-  assign rs1 = 3'd1;
-  assign rs2 = 3'd2;
-  assign rd  = 3'd3;
+  assign opcode = instruction[15:12];
 
-  assign alu_op = 2'b00;
+  assign rs1 = instruction[11:9];
+  assign rs2 = instruction[8:6];
+  assign rd = instruction[5:3];
 
-  assign reg_write = 1'b1;
   assign write_data = alu_result;
 
-  regfile register_file (
+  control_unit cu (
+    opcode,
+    alu_op,
+    reg_write
+  );
+
+  register_file regfile (
     .clk(clk),
     .write_en(reg_write),
     .rs1(rs1),

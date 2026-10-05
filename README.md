@@ -13,6 +13,16 @@ I learn in classes, because just reading the textbook is not working.
 - Memory: 32KiB
 - Big-Endian
 
+Instructions:
+- ADD
+- SUB
+- AND
+- OR
+- LOAD
+- STORE
+- JMP
+- BEQ
+
 ## Compiling & Running Instructions
 1. Run `verilator --binary --timing --trace-vcd --top-module tb_<...> rtl/*.sv testbench/tb_<...>.sv`
 1. `cd obj_dir`
