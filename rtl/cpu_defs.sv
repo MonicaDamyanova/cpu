@@ -1,7 +1,7 @@
 package cpu_defs;
     // CPU parameters
     parameter DATA_WIDTH = 16;
-    parameter INSTR_WIDTH = 16;
+    parameter INS_WIDTH = 16;
     parameter REG_COUNT = 8;
 
     // Opcodes

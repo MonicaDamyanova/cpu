@@ -1,19 +1,9 @@
-module control_unit (
-  input  logic [3:0] opcode,
-
-  output alu_op_t alu_op,        // Select ALU operation
-  output logic    reg_write,     // Write enable for register file
-);
-
-  import cpu_defs::*; 
-  
 import cpu_defs::*;
 
 module control_unit (
-    input  logic [3:0] opcode,
-
-    output alu_op_t alu_op,
-    output logic    reg_write
+  input  opcode_t opcode,
+  output alu_op_t alu_op,        // Select ALU operation
+  output logic reg_write     // Write enable for register file
 );
 
   always_comb begin

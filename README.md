@@ -23,6 +23,9 @@ Instructions:
 - JMP
 - BEQ
 
+15     12 11    9 8     6 5    3 2  0
+\[ opcode |  rs1  |  rs2  |  rd  |    \]
+
 ## Compiling & Running Instructions
 1. Run `verilator --binary --timing --trace-vcd --top-module tb_<...> rtl/*.sv testbench/tb_<...>.sv`
 1. `cd obj_dir`

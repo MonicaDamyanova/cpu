@@ -1,5 +1,9 @@
+import cpu_defs::*;
+
 module cpu(
-  input logic clk
+  input logic clk,
+  input logic reset, // To be added later
+  input logic [15:0] instruction
 );
 
   import cpu_defs::*;
@@ -16,7 +20,7 @@ module cpu(
   logic [15:0] write_data;
 
   logic [3:0] opcode;
-  logic [1:0] alu_op;
+  logic [2:0] alu_op;
 
   assign opcode = instruction[15:12];
 

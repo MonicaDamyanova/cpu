@@ -1,11 +1,11 @@
+import cpu_defs::*;
+
 module alu (
   input wire [15:0] a,
   input wire [15:0] b,
-  input alu_op_t [1:0] op,
+  input alu_op_t  op,
   output reg [15:0] out
 );
-
-  import cpu_defs::*;
 
   always @(*) begin
     case (op)

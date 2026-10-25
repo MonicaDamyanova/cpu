@@ -8,6 +8,7 @@ module register_file (
   output logic [15:0] out1, // Output data from Register 1
   output logic [15:0] out2  // Output data from Register 2
 );
+  // Will not have a reset
 
   reg [15:0] registers [0:7];
 
