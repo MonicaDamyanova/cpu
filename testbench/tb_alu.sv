@@ -1,14 +1,16 @@
 //`timescale 1ns/1ps
 
+import cpu_defs::*;
+
 module tb_alu;
 
   reg [15:0] a;
   reg [15:0] b;
-  reg [1:0] op;
+  alu_op_t op;
 
   wire [15:0] out;
 
-  alu dut ( // Device Under Test
+  arithmetic_logic_unit dut ( // Device Under Test
     .a(a), .b(b), .op(op), .out(out)
   );
 
@@ -18,12 +20,12 @@ module tb_alu;
 
     a = 10;
     b = 20;
-    op = 2'b00;
+    op = ALU_ADD;
     check_result(30);
 
     a = 20;
     b = 10;
-    op = 2'b01;
+    op = ALU_SUB;
     check_result(10);
 
     $finish;

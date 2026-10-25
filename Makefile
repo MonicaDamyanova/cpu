@@ -37,7 +37,7 @@ test_%:
 	$(MAKE) run TB=tb_$*
 
 # Discover all testbenches
-TESTS = $(patsubst tb/tb_%.sv,%,$(wildcard tb/tb_*.sv))
+TESTS = $(patsubst testbench/tb_%.sv,%,$(wildcard testbench/tb_*.sv))
 
 # Run every testbench
 test_all:

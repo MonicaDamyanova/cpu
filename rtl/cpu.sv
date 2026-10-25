@@ -6,15 +6,13 @@ module cpu(
   input logic [15:0] instruction
 );
 
-  import cpu_defs::*;
-
   logic [15:0] alu_a;
   logic [15:0] alu_b;
   logic [15:0] alu_result;
 
-  logic [2:0] rs1;
-  logic [2:0] rs2;
-  logic [2:0] rd;
+  logic [2:0] rs1; // Source Register #1
+  logic [2:0] rs2; // Source Register #2
+  logic [2:0] rd;  // Destination Register
 
   logic        reg_write;
   logic [15:0] write_data;
@@ -22,11 +20,16 @@ module cpu(
   logic [3:0] opcode;
   logic [2:0] alu_op;
 
-  assign opcode = instruction[15:12];
+  logic [15:0] pc; // Program Counter
+  logic [15:0] ir; // Instruction Register
 
-  assign rs1 = instruction[11:9];
-  assign rs2 = instruction[8:6];
-  assign rd = instruction[5:3];
+  assign ir = instruction;
+
+  assign opcode = ir[15:12];
+
+  assign rs1 = ir[11:9];
+  assign rs2 = ir[8:6];
+  assign rd = ir[5:3];
 
   assign write_data = alu_result;
 
@@ -47,7 +50,7 @@ module cpu(
     .in(alu_result)
   );
 
-  alu arithmetic_logic_unit (
+  arithmetic_logic_unit alu (
     .a(alu_a),
     .b(alu_b),
     .op(alu_op),

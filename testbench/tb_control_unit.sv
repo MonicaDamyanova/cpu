@@ -1,8 +1,9 @@
+import cpu_defs::*;
+
 module tb_control_unit;
-  import cpu_defs::*;
-  
-  logic [0:3] opcode;
-  logic [1:0]  alu_op;
+
+  opcode_t opcode;
+  alu_op_t alu_op;
   logic reg_write; 
 
   control_unit dut (opcode, alu_op, reg_write); 
@@ -27,8 +28,8 @@ module tb_control_unit;
   end
 
   task check_result;
-    alu_op_t expected_alu_op;
-    logic expected_reg_write;
+    input alu_op_t expected_alu_op;
+    input logic expected_reg_write;
 
     begin
       #10;

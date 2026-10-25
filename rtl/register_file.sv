@@ -10,20 +10,17 @@ module register_file (
 );
   // Will not have a reset
 
-  reg [15:0] registers [0:7];
+  reg [15:0] registers [1:7];
 
-  assign out1 = registers[rs1];
-  assign out2 = registers[rs2];
+  // Read
+  assign out1 = (rs1 == 0) ? '0 : registers[rs1];
+  assign out2 = (rs2 == 0) ? '0 : registers[rs2];
 
+  // Write
   always_ff @(posedge clk) begin 
-    if (write_en) begin
+    if (write_en && rd != 0) begin
       registers[rd] <= in;
     end
-  end
-
-  initial begin
-    registers[1] = 16'd10;
-    registers[2] = 16'd20;
   end
 
 endmodule

@@ -1,6 +1,6 @@
 import cpu_defs::*;
 
-module alu (
+module arithmetic_logic_unit (
   input wire [15:0] a,
   input wire [15:0] b,
   input alu_op_t  op,
