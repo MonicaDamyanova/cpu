@@ -27,7 +27,5 @@ Instructions:
 \[ opcode |  rs1  |  rs2  |  rd  |    \]
 
 ## Compiling & Running Instructions
-1. Run `verilator --binary --timing --trace-vcd --top-module tb_<...> rtl/*.sv testbench/tb_<...>.sv`
-1. `cd obj_dir`
-1. `./Vtb<...>`
+1. Run `make`, the CPU will compile and run the CPU test.
 1. Open GTKWave `gtkwave <...>.vcd`
