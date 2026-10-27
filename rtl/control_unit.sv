@@ -2,7 +2,7 @@ import cpu_defs::*;
 
 module control_unit (
   input  opcode_t opcode,
-  output alu_op_t alu_op,        // Select ALU operation
+  output alu_op_t alu_op,    // Select ALU operation
   output logic reg_write     // Write enable for register file
 );
 

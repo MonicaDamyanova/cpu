@@ -26,9 +26,4 @@ package cpu_defs;
         ALU_OR  = 3'h3
     } alu_op_t;
 
-    // Stages 
-    typedef enum logic [3:0] {
-      FETCH,
-      EXECUTE
-    } stage_t;
 endpackage

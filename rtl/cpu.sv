@@ -2,59 +2,127 @@ import cpu_defs::*;
 
 module cpu(
   input logic clk,
-  input logic reset, // To be added later
-  input logic [15:0] instruction
+  input logic reset
 );
+  // Stage 1: Fetch //
+  logic [ 7:0] pc;          // Program Counter
+  logic [15:0] instruction; // Instruction at the PC address in instruction memory
 
+  instruction_memory inst_mem (
+    .address(pc),
+    .instruction(instruction) 
+  );
+
+  // Stage 2: Decode //
+  // Deocode the current instruction in the Instruction Register
+  logic [15:0] ir; // Instruction Register
+
+  opcode_t decoded_opcode;
+  alu_op_t decoded_alu_op;
+  logic    decoded_reg_write;
+  logic [2:0] decoded_rs1; // Source Register #1
+  logic [2:0] decoded_rs2; // Source Register #2
+  logic [2:0] decoded_rd;  // Destination Register
+  logic [15:0] decoded_rs1_content;
+  logic [15:0] decoded_rs2_content;
+
+  assign decoded_opcode = opcode_t'(ir[15:12]);
+  assign decoded_rs1    = ir[11:9];
+  assign decoded_rs2    = ir[8:6];
+  assign decoded_rd     = ir[5:3];
+
+  control_unit cu (
+    .opcode(decoded_opcode),
+    .alu_op(decoded_alu_op),
+    .reg_write(decoded_reg_write)
+  );
+
+  // Stage 3: Execute //
   logic [15:0] alu_a;
   logic [15:0] alu_b;
   logic [15:0] alu_result;
-
-  logic [2:0] rs1; // Source Register #1
-  logic [2:0] rs2; // Source Register #2
-  logic [2:0] rd;  // Destination Register
-
-  logic        reg_write;
-  logic [15:0] write_data;
-
-  logic [3:0] opcode;
-  logic [2:0] alu_op;
-
-  logic [15:0] pc; // Program Counter
-  logic [15:0] ir; // Instruction Register
-
-  assign ir = instruction;
-
-  assign opcode = ir[15:12];
-
-  assign rs1 = ir[11:9];
-  assign rs2 = ir[8:6];
-  assign rd = ir[5:3];
-
-  assign write_data = alu_result;
-
-  control_unit cu (
-    opcode,
-    alu_op,
-    reg_write
-  );
-
-  register_file regfile (
-    .clk(clk),
-    .write_en(reg_write),
-    .rs1(rs1),
-    .rs2(rs2),
-    .rd(rd),
-    .out1(alu_a),
-    .out2(alu_b),
-    .in(alu_result)
-  );
+  alu_op_t     executed_alu_op;
+  logic [2:0]  executed_rd;        // Carrying over from Stage 2
+  logic        executed_reg_write; // Carrying over from Stage 2
 
   arithmetic_logic_unit alu (
     .a(alu_a),
     .b(alu_b),
-    .op(alu_op),
+    .op(executed_alu_op),
     .out(alu_result)
   );
+
+  // Stage 4: Memory Access
+  // Carrying over from Stage 3
+  logic [15:0] memory_alu_result;
+  logic [2:0]  memory_rd;
+  logic        memory_reg_write;
+
+  // Stage 5: Writeback
+  // Carrying over from Stage 4
+  logic [15:0] writeback_alu_result;
+  logic [2:0]  writeback_rd;
+  logic        writeback_reg_write;
+
+  register_file regfile (
+    .clk(clk),
+    .rs1(decoded_rs1),
+    .rs2(decoded_rs2),
+    .out1(decoded_rs1_content),
+    .out2(decoded_rs2_content),
+    .rd(writeback_rd),
+    .in(writeback_alu_result),
+    .write_en(writeback_reg_write && !reset) // Prevent writing if reset is set to 1.
+  );
+
+  // Always FF is sequential logic (flip-flops)
+  // Will not execute automatically, waits for the specific clock edge
+  // Only uses non-blocking assignments
+  // Non-blocking assignments don't update their destination registers
+  // immediately. The right-hand side is evaluated with the values available
+  // at the clock edge. The register updates happen afterwards.
+  always_ff @(posedge clk) begin
+    if (reset) begin 
+      pc <= 0;
+      ir <= 16'b0; // This is an invalid instruction |  TODO: Fix that
+      executed_reg_write  <= 0;
+      memory_reg_write    <= 0;
+      writeback_reg_write <= 0;
+    end else begin
+      // Stage 1: Fetch //
+      pc <= pc + 1;
+      // The PC is connected to the instruction memory, on the next
+      // clock cycle, the instruction at the address of the PC is
+      // placed in the Instruction Register
+
+      // Stage 2: Decode //
+      ir <= instruction; // Assumes Asyncronous instruction memory 
+      // The Instruction Register is automatically decoded into
+      // RS1, RS2, RD, and an opcode.
+
+      // Stage 3: Execute //
+      alu_a <= decoded_rs1_content;
+      alu_b <= decoded_rs2_content;
+      executed_alu_op <= decoded_alu_op;
+      executed_rd <= decoded_rd;
+      executed_reg_write <= decoded_reg_write;
+      // All of these are either connected to the ALU, or required to
+      // write the result back to the Register File in Stage 5.
+
+      // Stage 4: Memory Access //
+      memory_alu_result <= alu_result;
+      memory_rd <= executed_rd;
+      memory_reg_write <= executed_reg_write;
+      // No memory access is implemented yet, so these values are just 
+      // carried over.
+
+      // Stage 5: Writeback //
+      writeback_alu_result <= memory_alu_result;
+      writeback_rd <= memory_rd;
+      writeback_reg_write <= memory_reg_write;
+      // The final value is written to the register file, the writeback 
+      // wires are connected directly to the register file.
+    end
+  end
 
 endmodule
