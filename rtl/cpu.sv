@@ -16,6 +16,7 @@ module cpu(
   // Stage 2: Decode //
   // Deocode the current instruction in the Instruction Register
   logic [15:0] ir; // Instruction Register
+  logic ir_valid;  // Prevents an invalid instruction from writing to registers.
 
   opcode_t decoded_opcode;
   alu_op_t decoded_alu_op;
@@ -84,19 +85,18 @@ module cpu(
   always_ff @(posedge clk) begin
     if (reset) begin 
       pc <= 0;
-      ir <= 16'b0; // This is an invalid instruction |  TODO: Fix that
+      ir <= 16'b0;
+      ir_valid <= 0;
       executed_reg_write  <= 0;
       memory_reg_write    <= 0;
       writeback_reg_write <= 0;
     end else begin
-      // Stage 1: Fetch //
-      pc <= pc + 1;
-      // The PC is connected to the instruction memory, on the next
-      // clock cycle, the instruction at the address of the PC is
-      // placed in the Instruction Register
-
+      // These all happen at the start of each of these stages, and the
+      // result is used during the stage.
       // Stage 2: Decode //
-      ir <= instruction; // Assumes Asyncronous instruction memory 
+      pc <= pc + 1;
+      ir <= instruction; // Assumes Asyncronous instruction memory
+      ir_valid <= 1;
       // The Instruction Register is automatically decoded into
       // RS1, RS2, RD, and an opcode.
 
@@ -105,7 +105,7 @@ module cpu(
       alu_b <= decoded_rs2_content;
       executed_alu_op <= decoded_alu_op;
       executed_rd <= decoded_rd;
-      executed_reg_write <= decoded_reg_write;
+      executed_reg_write <= decoded_reg_write && ir_valid;
       // All of these are either connected to the ALU, or required to
       // write the result back to the Register File in Stage 5.
 
