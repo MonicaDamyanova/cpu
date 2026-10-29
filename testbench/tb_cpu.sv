@@ -32,20 +32,25 @@ always #5 clk = ~clk;
     @(negedge clk);
     assert(dut.regfile.registers[3] == 16'd0)
         else $fatal(1, "Register 3 should still be zero at the 4th stage.");
-    $display("Register 3 is still zero!");
+    $display("PASS: Register 3 is still zero!");
 
     @(posedge clk);
     @(negedge clk);
     assert(dut.regfile.registers[3] == 16'd30)
         else $fatal(1, "ADD instruction failed!");
-    $display("ADD instruction passed!");
+    $display("PASS: ADD instruction passed!");
 
     @(posedge clk);
     @(negedge clk);
     assert(dut.regfile.registers[4] == 16'd30)
         else $fatal(1, "SUB instruction failed!");
-    $display("SUB instruction passed!");
+    $display("PASS: SUB instruction passed!");
 
+    @(posedge clk);
+    @(negedge clk);
+    assert(dut.regfile.registers[3] == 16'd40)
+        else $fatal(1, "Second ADD instruction failed!");
+    $display("PASS: Second ADD instruction passed!");
     $finish;
   end
 

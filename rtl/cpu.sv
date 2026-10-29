@@ -41,14 +41,18 @@ module cpu(
   // Stage 3: Execute //
   logic [15:0] alu_a;
   logic [15:0] alu_b;
+  logic [15:0] forwarded_alu_a;
+  logic [15:0] forwarded_alu_b;
   logic [15:0] alu_result;
+  logic [2:0]  executed_rs1;
+  logic [2:0]  executed_rs2;
   alu_op_t     executed_alu_op;
   logic [2:0]  executed_rd;        // Carrying over from Stage 2
   logic        executed_reg_write; // Carrying over from Stage 2
 
   arithmetic_logic_unit alu (
-    .a(alu_a),
-    .b(alu_b),
+    .a(forwarded_alu_a),
+    .b(forwarded_alu_b),
     .op(executed_alu_op),
     .out(alu_result)
   );
@@ -58,6 +62,21 @@ module cpu(
   logic [15:0] memory_alu_result;
   logic [2:0]  memory_rd;
   logic        memory_reg_write;
+
+  // Forwarding results from the ALU before they are written to the
+  // register file.
+  logic        forward_a;
+  logic        forward_b;
+
+  assign forward_a = executed_rs1 == memory_rd &&
+                     memory_reg_write &&
+                     memory_rd != 0;
+  assign forwarded_alu_a = forward_a ? memory_alu_result : alu_a;
+
+  assign forward_b = executed_rs2 == memory_rd &&
+                     memory_reg_write &&
+                     memory_rd != 0;
+  assign forwarded_alu_b = forward_b ? memory_alu_result : alu_b;
 
   // Stage 5: Writeback
   // Carrying over from Stage 4
@@ -103,6 +122,8 @@ module cpu(
       // Stage 3: Execute //
       alu_a <= decoded_rs1_content;
       alu_b <= decoded_rs2_content;
+      executed_rs1 <= decoded_rs1;
+      executed_rs2 <= decoded_rs2;
       executed_alu_op <= decoded_alu_op;
       executed_rd <= decoded_rd;
       executed_reg_write <= decoded_reg_write && ir_valid;
